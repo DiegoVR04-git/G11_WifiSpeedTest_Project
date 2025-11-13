@@ -344,7 +344,7 @@
             padding: 0;
             max-width: 480px;
             width: 90%;
-            max-height: 85vh;
+            max-height: 90vh;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -684,7 +684,7 @@
                     <div id="signupError" class="login-error hidden"></div>
                     <div style="display: flex; gap: 8px; margin-top: 14px;">
                         <button class="feature-button" onclick="submitSignup()" style="flex: 1; padding: 10px 16px; font-size: 0.95rem;">Create Account</button>
-                        <button class="feature-button" onclick="closeSignupModal()" style="flex: 0 0 auto; background: rgba(255,255,255,0.1); padding: 10px 16px; font-size: 0.95rem;">Cancel</button>
+                        <button class="feature-button" onclick="closeSignupModal()" style="flex: 0 0 auto; background: rgba(255,255,255,0.1); padding: 10px 12px; font-size: 0.95rem; white-space: nowrap;">Close</button>
                     </div>
                 </div>
             </div>
@@ -711,9 +711,9 @@
                         <input id="securityAnswerInput" class="login-input" style="width: 100%; margin-bottom: 12px;" placeholder="Your answer" />
                         <input id="newPasswordInput" class="login-input" type="password" style="width: 100%; margin-bottom: 12px;" placeholder="New password (min 4 characters)" />
                         <div id="forgotPasswordError2" class="login-error hidden"></div>
-                        <div style="display: flex; gap: 10px;">
-                            <button class="feature-button" onclick="resetPassword()" style="flex: 1;">Reset Password</button>
-                            <button class="feature-button" onclick="goBackForgotPassword()" style="flex: 0 0 auto; background: rgba(255,255,255,0.1);">Back</button>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="feature-button" onclick="resetPassword()" style="flex: 1; padding: 10px 16px; font-size: 0.95rem;">Reset Password</button>
+                            <button class="feature-button" onclick="goBackForgotPassword()" style="flex: 0 0 auto; background: rgba(255,255,255,0.1); padding: 10px 12px; font-size: 0.95rem; white-space: nowrap;">Back</button>
                         </div>
                     </div>
                 </div>

@@ -1,75 +1,152 @@
-# 📡 WiFi Speed Test Web App# WiFi Tester Web App
+# 📡 WiFi Speed Test Web App
 
+![WiFi Speed Test](https://img.shields.io/badge/WiFi-Speed%20Test-blue?style=for-the-badge)  
+![Python](https://img.shields.io/badge/Python-3.7+-green?style=for-the-badge&logo=python)  
+![Flask](https://img.shields.io/badge/Flask-2.3+-red?style=for-the-badge&logo=flask)  
+![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)
 
+## Overview
 
-A beautiful and modern web application to test your WiFi connection speed using Python Flask and the speedtest-cli library.A simple web application built with Python Flask to test WiFi connectivity and network performance.
+A modern, Flask-based web application to test your WiFi and internet connection speed using the `speedtest-cli` library. It provides role-based dashboards tailored for Home Users, IT Administrators, and ISP Support, delivering download/upload speeds, ping, diagnostics, and shareable reports.
 
+---
 
+## Why this project?
 
-![WiFi Speed Test](https://img.shields.io/badge/WiFi-Speed%20Test-blue?style=for-the-badge)## Features
+Accurate and easy-to-use WiFi speed testing tools help users and IT professionals quickly diagnose internet performance issues. This app offers a simple yet powerful solution with role-based features to cater to different user needs.
 
-![Python](https://img.shields.io/badge/Python-3.7+-green?style=for-the-badge&logo=python)
+---
 
-![Flask](https://img.shields.io/badge/Flask-2.3+-red?style=for-the-badge&logo=flask)🌐 **Internet Connectivity Test**
+## Demo
 
-- Tests basic internet connection to Google
+![WiFi Speed Test Demo](https://your-demo-link-or-gif-here)  
+*(Add a screenshot or GIF showing the UI in action)*
 
-## ✨ Features- Shows response time and status
+---
 
+## Features
 
+- 🌐 **Internet Connectivity Test:** Basic ping to Google to check internet availability.  
+- Role-based UI and API endpoints:  
+  - Home User: Simple one-click speed tests.  
+  - IT Administrator: Access to speed test history, diagnostics, export, and clear history.  
+  - ISP Support: Generate shareable reports for customers.  
+- Background speed testing (non-blocking operations).  
+- In-memory history of the last 50 tests (can be replaced by a persistent database).  
+- Diagnostics and report export features.
 
-# � WiFi Speed Test Web App
+---
 
-A Flask-based web app that runs internet speed tests (download, upload, ping) using the speedtest-cli library and provides role-based dashboards for Home Users, IT Administrators, and ISP Support.
+## Quick Start
 
-Features
---------
-- Role-based UI and API endpoints (Home User, IT Admin, ISP Support)
-- Background speed testing (non-blocking)
-- In-memory history of the last 50 tests (replaceable with a database)
-- Diagnostics, export, and shareable report endpoints
+### Prerequisites
 
-Getting started
----------------
-1. Create and activate a Python virtual environment (recommended):
+- Python 3.7 or higher  
+- `pip` package manager
 
-```powershell
+### Installation and Running Locally
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/wifi-speed-test-webapp.git
+cd wifi-speed-test-webapp
+
+2. Create and activate a Python virtual environment:
+
 python -m venv .venv
+# Windows PowerShell
 .\.venv\Scripts\Activate.ps1
-```
+# macOS/Linux
+source .venv/bin/activate
 
-2. Install dependencies:
+3. Install dependencies:
 
-```powershell
 pip install -r requirements.txt
-```
 
-3. Run the app (development):
+4. Run the app in development mode:
 
-```powershell
 python app.py
+
+5. Open your browser and go to: http://127.0.0.1:5000
+
+---
+
 ```
+## Usage Examples
 
-4. Open http://127.0.0.1:5000 in your browser.
+Navigate through different user roles for tailored dashboards.
 
-Notes
------
-- History is stored in memory for simplicity. Use a database (SQLite, Postgres) for persistence in production.
-- The speed test runs in a background thread and receives the selected user role when started (avoids accessing Flask session from background threads).
+Run a speed test with a single click from the Home User interface.
 
-User roles
-----------
-- Home User: simplified UI, one-click tests.
-- IT Administrator: access to history, diagnostics, export, and clear history.
-- ISP Support: can generate shareable reports for customers.
+IT Admins can view detailed test history and export reports.
 
-Next steps
-----------
-- Add persistence (SQLite) and authentication.
-- Add unit tests and CI pipeline.
+ISP Support can generate customer shareable reports.
 
-License
--------
-MIT
+---
+
+## Configuration
+
+Currently stores history in memory (last 50 tests).
+
+User roles are passed to background speed testing threads to avoid session issues.
+
+In production, replace in-memory storage with a persistent database (e.g., SQLite, PostgreSQL).
+
+---
+
+## Testing
+
+(Add instructions once tests are implemented)
+
+---
+
+## Deployment
+
+Suitable for deployment on any Python-compatible web server.
+
+Consider adding authentication and database persistence for production use.
+
+Contributing
+
+Contributions are welcome! Please:
+
+Fork the repo and create your feature branch.
+
+Follow PEP8 coding style.
+
+Add tests for new features.
+
+Open a pull request with a clear description of your changes.
+
+Use GitHub issues for bug reports or feature requests.
+
+## License
+
+This project is licensed under the MIT License
+.
+
+Maintainers / Contact
+
+
+GitHub Issues: https://github.com/yourusername/wifi-speed-test-webapp/issues
+
+## Roadmap
+
+Add persistent storage with SQLite/Postgres
+
+Implement user authentication and authorization
+
+Add unit and integration tests
+
+Setup Continuous Integration (CI) pipeline
+
+## Credits
+
+Built with Python
+ and Flask
+
+Uses speedtest-cli
+ for internet speed measurement
 
 Made with ❤️ using Python and Flask.

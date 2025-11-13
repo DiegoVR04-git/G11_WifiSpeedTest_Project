@@ -27,6 +27,12 @@
             max-width: 1200px;
             margin: 0 auto;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            transition: min-height 0.3s ease;
+            min-height: auto;
+        }
+        
+        .header.modal-open {
+            min-height: 600px;
         }
 
         .header h1 {
@@ -153,7 +159,7 @@
             cursor: pointer; 
             transition: all 0.2s ease; 
             margin: 6px 0; 
-            width: 100%; 
+            width: 50%; 
         }
         
         .feature-button:hover { 
@@ -192,12 +198,12 @@
         }
         
         .login-input { 
-            padding: 10px 14px; 
+            padding: 12px 16px; 
             border-radius: 8px; 
             border: 1px solid rgba(255, 255, 255, 0.2); 
             background: rgba(255, 255, 255, 0.15);
             color: #ffffff !important;
-            font-size: 0.9rem;
+            font-size: 1rem;
             min-width: 140px;
             flex: 1;
             font-weight: 500;
@@ -330,7 +336,7 @@
             display: flex;
             align-items: flex-start;
             justify-content: center;
-            padding-top: 40px;
+            padding: 40px 20px;
             overflow-y: auto;
             z-index: 1000;
         }
@@ -344,10 +350,12 @@
             border: 2px solid rgba(255, 255, 255, 0.2);
             border-radius: 16px;
             padding: 0;
-            max-width: 480px;
-            width: 90%;
-            max-height: 90vh;
+            max-width: 550px;
+            width: 100%;
+            max-height: none;
+            height: auto;
             overflow-y: auto;
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
@@ -366,7 +374,7 @@
         }
         
         .modal-header {
-            padding: 20px 24px;
+            padding: 28px 32px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.15);
             display: flex;
             justify-content: space-between;
@@ -376,7 +384,7 @@
         
         .modal-header h2 {
             margin: 0;
-            font-size: 1.3rem;
+            font-size: 1.6rem;
             font-weight: 700;
             word-wrap: break-word;
             overflow-wrap: break-word;
@@ -406,9 +414,10 @@
         }
         
         .modal-body {
-            padding: 20px 24px 24px;
+            padding: 28px 32px 32px;
             flex: 1;
             overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .speed-display { 
@@ -674,19 +683,20 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h2>Create Home User Account</h2>
-                    <button class="close-btn" onclick="closeSignupModal()">&times;</button>
+                    <button class="close-btn" onclick="closeSignupModal()">✕</button>
                 </div>
                 <div class="modal-body">
-                    <p style="opacity: 0.9; margin-bottom: 14px; font-size: 0.85rem;">Create an account to use the WiFi Speed Tester. All fields are required.</p>
-                    <input id="signupUsername" class="login-input" style="width: 100%; margin-bottom: 10px;" placeholder="Username (min 3 characters)" />
-                    <input id="signupDisplayName" class="login-input" style="width: 100%; margin-bottom: 10px;" placeholder="Display Name (optional)" />
-                    <input id="signupPassword" class="login-input" type="password" style="width: 100%; margin-bottom: 10px;" placeholder="Password (min 4 characters, required)" />
-                    <input id="signupSecurityQuestion" class="login-input" style="width: 100%; margin-bottom: 10px;" placeholder="Security Question" />
-                    <input id="signupSecurityAnswer" class="login-input" style="width: 100%; margin-bottom: 10px;" placeholder="Answer to question" />
+                    <p style="opacity: 0.9; margin-bottom: 18px; font-size: 0.95rem;">Create an account to use the WiFi Speed Tester. All fields are required.</p>
+                    <input id="signupUsername" class="login-input" style="width: 100%; margin-bottom: 14px;" placeholder="Username (min 3 characters)" />
+                    <input id="signupDisplayName" class="login-input" style="width: 100%; margin-bottom: 14px;" placeholder="Display Name (optional)" />
+                    <input id="signupPassword" class="login-input" type="password" style="width: 100%; margin-bottom: 14px;" placeholder="Password (min 4 characters, required)" />
+                    <input id="signupPasswordConfirm" class="login-input" type="password" style="width: 100%; margin-bottom: 14px;" placeholder="Re-enter Password" />
+                    <input id="signupSecurityQuestion" class="login-input" style="width: 100%; margin-bottom: 14px;" placeholder="Security Question" />
+                    <input id="signupSecurityAnswer" class="login-input" style="width: 100%; margin-bottom: 16px;" placeholder="Answer to question" />
                     <div id="signupError" class="login-error hidden"></div>
-                    <div style="display: flex; gap: 8px; margin-top: 14px;">
-                        <button class="feature-button" onclick="submitSignup()" style="flex: 1; padding: 10px 16px; font-size: 0.95rem;">Create Account</button>
-                        <button class="feature-button" onclick="closeSignupModal()" style="flex: 0 0 auto; background: rgba(255,255,255,0.1); padding: 8px 10px; font-size: 0.95rem; white-space: nowrap;">✕</button>
+                    <div style="display: flex; gap: 10px; margin-top: 18px;">
+                        <button class="feature-button" onclick="submitSignup()" style="flex: 1; padding: 12px 18px; font-size: 1rem;">Create Account</button>
+                        <button class="feature-button" onclick="closeSignupModal()" style="flex: 0 0 auto; background: rgba(255,255,255,0.1); padding: 12px 14px; font-size: 1rem; white-space: nowrap;">Go Back</button>
                     </div>
                 </div>
             </div>
@@ -701,21 +711,21 @@
                 </div>
                 <div class="modal-body">
                     <div id="forgotPasswordStep1" class="recovery-step">
-                        <p style="opacity: 0.9; margin-bottom: 16px; font-size: 0.9rem;">Enter your username to verify your identity.</p>
-                        <input id="forgotUsername" class="login-input" style="width: 100%; margin-bottom: 12px;" placeholder="Username" />
+                        <p style="opacity: 0.9; margin-bottom: 18px; font-size: 1rem;">Enter your username to verify your identity.</p>
+                        <input id="forgotUsername" class="login-input" style="width: 100%; margin-bottom: 14px;" placeholder="Username" />
                         <div id="forgotPasswordError" class="login-error hidden"></div>
-                        <button class="feature-button" onclick="fetchSecurityQuestion()" style="width: 100%;">Next</button>
+                        <button class="feature-button" onclick="fetchSecurityQuestion()" style="width: 100%; padding: 12px 18px; font-size: 1rem;">Next</button>
                     </div>
                     
                     <div id="forgotPasswordStep2" class="recovery-step hidden">
-                        <p style="opacity: 0.9; margin-bottom: 12px; font-size: 0.9rem;">Answer your security question:</p>
-                        <div id="securityQuestionDisplay" style="background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; margin-bottom: 12px; font-weight: 500;"></div>
-                        <input id="securityAnswerInput" class="login-input" style="width: 100%; margin-bottom: 12px;" placeholder="Your answer" />
-                        <input id="newPasswordInput" class="login-input" type="password" style="width: 100%; margin-bottom: 12px;" placeholder="New password (min 4 characters)" />
+                        <p style="opacity: 0.9; margin-bottom: 14px; font-size: 1rem;">Answer your security question:</p>
+                        <div id="securityQuestionDisplay" style="background: rgba(255,255,255,0.1); padding: 14px; border-radius: 8px; margin-bottom: 14px; font-weight: 500;"></div>
+                        <input id="securityAnswerInput" class="login-input" style="width: 100%; margin-bottom: 14px;" placeholder="Your answer" />
+                        <input id="newPasswordInput" class="login-input" type="password" style="width: 100%; margin-bottom: 16px;" placeholder="New password (min 4 characters)" />
                         <div id="forgotPasswordError2" class="login-error hidden"></div>
-                        <div style="display: flex; gap: 8px;">
-                            <button class="feature-button" onclick="resetPassword()" style="flex: 1; padding: 10px 16px; font-size: 0.95rem;">Reset Password</button>
-                            <button class="feature-button" onclick="goBackForgotPassword()" style="flex: 0 0 auto; background: rgba(255,255,255,0.1); padding: 8px 10px; font-size: 0.95rem; white-space: nowrap;">←</button>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="feature-button" onclick="resetPassword()" style="flex: 1; padding: 12px 18px; font-size: 1rem;">Reset Password</button>
+                            <button class="feature-button" onclick="goBackForgotPassword()" style="flex: 0 0 auto; background: rgba(255,255,255,0.1); padding: 12px 14px; font-size: 1rem; white-space: nowrap;">←</button>
                         </div>
                     </div>
                 </div>
@@ -1081,6 +1091,7 @@
         // Password Recovery Functions
         function openForgotPasswordModal() {
             document.getElementById('forgotPasswordModal').classList.remove('hidden');
+            document.querySelector('.header').classList.add('modal-open');
             document.getElementById('forgotPasswordStep1').classList.remove('hidden');
             document.getElementById('forgotPasswordStep2').classList.add('hidden');
             document.getElementById('forgotUsername').value = '';
@@ -1092,6 +1103,7 @@
 
         function closeForgotPasswordModal() {
             document.getElementById('forgotPasswordModal').classList.add('hidden');
+            document.querySelector('.header').classList.remove('modal-open');
         }
 
         function fetchSecurityQuestion() {
@@ -1449,9 +1461,11 @@
             }
             
             document.getElementById('signupModal').classList.remove('hidden');
+            document.querySelector('.header').classList.add('modal-open');
             document.getElementById('signupUsername').value = '';
             document.getElementById('signupDisplayName').value = '';
             document.getElementById('signupPassword').value = '';
+            document.getElementById('signupPasswordConfirm').value = '';
             document.getElementById('signupSecurityQuestion').value = '';
             document.getElementById('signupSecurityAnswer').value = '';
             document.getElementById('signupError').classList.add('hidden');
@@ -1459,12 +1473,14 @@
         
         function closeSignupModal() {
             document.getElementById('signupModal').classList.add('hidden');
+            document.querySelector('.header').classList.remove('modal-open');
         }
         
         function submitSignup() {
             const username = document.getElementById('signupUsername').value.trim();
             const displayName = document.getElementById('signupDisplayName').value.trim();
             const password = document.getElementById('signupPassword').value;
+            const passwordConfirm = document.getElementById('signupPasswordConfirm').value;
             const securityQuestion = document.getElementById('signupSecurityQuestion').value.trim();
             const securityAnswer = document.getElementById('signupSecurityAnswer').value.trim();
             const signupErr = document.getElementById('signupError');
@@ -1494,6 +1510,18 @@
             
             if (password.length < 4) {
                 signupErr.textContent = 'Password must be at least 4 characters';
+                signupErr.classList.remove('hidden');
+                return;
+            }
+            
+            if (!passwordConfirm) {
+                signupErr.textContent = 'Please confirm your password';
+                signupErr.classList.remove('hidden');
+                return;
+            }
+            
+            if (password !== passwordConfirm) {
+                signupErr.textContent = 'Passwords do not match';
                 signupErr.classList.remove('hidden');
                 return;
             }

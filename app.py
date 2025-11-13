@@ -55,7 +55,9 @@ def init_db():
         username TEXT UNIQUE,
         password TEXT,
         role TEXT,
-        display_name TEXT
+        display_name TEXT,
+        security_question TEXT,
+        security_answer TEXT
     )
     ''')
     # Create reports table for storing generated ISP reports
@@ -71,6 +73,15 @@ def init_db():
     )
     ''')
     conn.commit()
+    
+    # Add security question columns to existing database if they don't exist
+    try:
+        cur.execute('ALTER TABLE users ADD COLUMN security_question TEXT')
+        cur.execute('ALTER TABLE users ADD COLUMN security_answer TEXT')
+        conn.commit()
+    except sqlite3.OperationalError:
+        # Columns already exist, no action needed
+        pass
     conn.close()
 
 def seed_demo_users():
@@ -292,6 +303,8 @@ def signup():
     username = (data.get('username') or '').strip()
     password = data.get('password', '').strip()
     display_name = (data.get('display_name') or username).strip()
+    security_question = (data.get('security_question') or '').strip()
+    security_answer = (data.get('security_answer') or '').strip()
 
     # Validate username
     if not username:
@@ -299,6 +312,13 @@ def signup():
     
     if len(username) < 3:
         return jsonify({'status': 'error', 'message': 'Username must be at least 3 characters'}), 400
+    
+    # Validate security question and answer (required for password reset)
+    if not security_question:
+        return jsonify({'status': 'error', 'message': 'Security question is required'}), 400
+    
+    if not security_answer:
+        return jsonify({'status': 'error', 'message': 'Security answer is required'}), 400
 
     # Check if username already exists
     conn = get_db_connection()
@@ -313,10 +333,10 @@ def signup():
     # Hash password if provided, otherwise allow passwordless guest account
     hashed_password = generate_password_hash(password) if password else None
 
-    # Insert new home user
+    # Insert new home user with security question and answer
     try:
-        cur.execute('INSERT INTO users (username, password, role, display_name) VALUES (?, ?, ?, ?)',
-                    (username, hashed_password, 'home_user', display_name))
+        cur.execute('INSERT INTO users (username, password, role, display_name, security_question, security_answer) VALUES (?, ?, ?, ?, ?, ?)',
+                    (username, hashed_password, 'home_user', display_name, security_question, security_answer))
         conn.commit()
         conn.close()
 
@@ -334,6 +354,79 @@ def signup():
     except Exception as e:
         conn.close()
         return jsonify({'status': 'error', 'message': f'Registration failed: {str(e)}'}), 500
+
+@app.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    """Forgot password endpoint for Home Users - verify security question"""
+    data = request.json or {}
+    username = (data.get('username') or '').strip()
+    
+    if not username:
+        return jsonify({'status': 'error', 'message': 'Username is required'}), 400
+    
+    # Check if user exists and is home_user
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT id, security_question FROM users WHERE LOWER(username) = LOWER(?) AND role = ?', 
+                (username, 'home_user'))
+    user = cur.fetchone()
+    conn.close()
+    
+    if not user:
+        return jsonify({'status': 'error', 'message': 'User not found or is not a Home User'}), 404
+    
+    if not user['security_question']:
+        return jsonify({'status': 'error', 'message': 'Security question not set for this account'}), 400
+    
+    return jsonify({
+        'status': 'success',
+        'security_question': user['security_question']
+    })
+
+@app.route('/verify-security-answer', methods=['POST'])
+def verify_security_answer():
+    """Verify security answer and reset password for Home Users"""
+    data = request.json or {}
+    username = (data.get('username') or '').strip()
+    security_answer = (data.get('security_answer') or '').strip()
+    new_password = data.get('new_password', '').strip()
+    
+    if not username or not security_answer or not new_password:
+        return jsonify({'status': 'error', 'message': 'All fields are required'}), 400
+    
+    if len(new_password) < 4:
+        return jsonify({'status': 'error', 'message': 'Password must be at least 4 characters'}), 400
+    
+    # Check user and verify answer (case-insensitive comparison)
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT id, security_answer FROM users WHERE LOWER(username) = LOWER(?) AND role = ?', 
+                (username, 'home_user'))
+    user = cur.fetchone()
+    
+    if not user:
+        conn.close()
+        return jsonify({'status': 'error', 'message': 'User not found'}), 404
+    
+    # Verify security answer (case-insensitive)
+    if user['security_answer'].lower() != security_answer.lower():
+        conn.close()
+        return jsonify({'status': 'error', 'message': 'Security answer is incorrect'}), 401
+    
+    # Update password
+    hashed_password = generate_password_hash(new_password)
+    try:
+        cur.execute('UPDATE users SET password = ? WHERE id = ?', (hashed_password, user['id']))
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            'status': 'success',
+            'message': 'Password reset successfully. You can now login with your new password.'
+        })
+    except Exception as e:
+        conn.close()
+        return jsonify({'status': 'error', 'message': f'Password reset failed: {str(e)}'}), 500
 
 @app.route('/start-test')
 def start_test():

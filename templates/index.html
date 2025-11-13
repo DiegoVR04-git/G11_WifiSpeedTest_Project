@@ -635,6 +635,7 @@
                     <button class="feature-button" id="loginBtn">Login</button>
                     <button class="feature-button hidden" id="logoutBtn">Logout</button>
                     <button class="feature-button" id="signupBtn" style="background: linear-gradient(135deg, #7ee787, #4facfe);">Sign Up</button>
+                    <button class="feature-button" id="forgotPasswordBtn" style="background: rgba(255,255,255,0.1); font-size: 0.85rem; padding: 8px 16px;">Forgot Password?</button>
                     <div id="loggedInInfo" class="logged-badge" aria-live="polite"></div>
                 </div>
                 <div style="width:100%"><div id="loginError" class="login-error hidden"></div></div>
@@ -653,10 +654,42 @@
                     <input id="signupUsername" class="login-input" style="width: 100%; margin-bottom: 12px;" placeholder="Username (required, min 3 characters)" />
                     <input id="signupDisplayName" class="login-input" style="width: 100%; margin-bottom: 12px;" placeholder="Display Name (optional)" />
                     <input id="signupPassword" class="login-input" type="password" style="width: 100%; margin-bottom: 12px;" placeholder="Password (optional, for secure login)" />
+                    <input id="signupSecurityQuestion" class="login-input" style="width: 100%; margin-bottom: 12px;" placeholder="Security Question (for password recovery)" />
+                    <input id="signupSecurityAnswer" class="login-input" style="width: 100%; margin-bottom: 12px;" placeholder="Answer to your security question" />
                     <div id="signupError" class="login-error hidden"></div>
                     <div style="display: flex; gap: 10px; margin-top: 16px;">
                         <button class="feature-button" onclick="submitSignup()" style="flex: 1;">Create Account</button>
                         <button class="feature-button" onclick="closeSignupModal()" style="flex: 0 0 auto; background: rgba(255,255,255,0.1);">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Forgot Password Modal -->
+        <div id="forgotPasswordModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Recover Password</h2>
+                    <button class="close-btn" onclick="closeForgotPasswordModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="forgotPasswordStep1" class="recovery-step">
+                        <p style="opacity: 0.9; margin-bottom: 16px; font-size: 0.9rem;">Enter your username to verify your identity.</p>
+                        <input id="forgotUsername" class="login-input" style="width: 100%; margin-bottom: 12px;" placeholder="Username" />
+                        <div id="forgotPasswordError" class="login-error hidden"></div>
+                        <button class="feature-button" onclick="fetchSecurityQuestion()" style="width: 100%;">Next</button>
+                    </div>
+                    
+                    <div id="forgotPasswordStep2" class="recovery-step hidden">
+                        <p style="opacity: 0.9; margin-bottom: 12px; font-size: 0.9rem;">Answer your security question:</p>
+                        <div id="securityQuestionDisplay" style="background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; margin-bottom: 12px; font-weight: 500;"></div>
+                        <input id="securityAnswerInput" class="login-input" style="width: 100%; margin-bottom: 12px;" placeholder="Your answer" />
+                        <input id="newPasswordInput" class="login-input" type="password" style="width: 100%; margin-bottom: 12px;" placeholder="New password (min 4 characters)" />
+                        <div id="forgotPasswordError2" class="login-error hidden"></div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="feature-button" onclick="resetPassword()" style="flex: 1;">Reset Password</button>
+                            <button class="feature-button" onclick="goBackForgotPassword()" style="flex: 0 0 auto; background: rgba(255,255,255,0.1);">Back</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1016,6 +1049,122 @@
                 });
         }
 
+        // Password Recovery Functions
+        function openForgotPasswordModal() {
+            document.getElementById('forgotPasswordModal').classList.remove('hidden');
+            document.getElementById('forgotPasswordStep1').classList.remove('hidden');
+            document.getElementById('forgotPasswordStep2').classList.add('hidden');
+            document.getElementById('forgotUsername').value = '';
+            document.getElementById('securityAnswerInput').value = '';
+            document.getElementById('newPasswordInput').value = '';
+            document.getElementById('forgotPasswordError').classList.add('hidden');
+            document.getElementById('forgotPasswordError2').classList.add('hidden');
+        }
+
+        function closeForgotPasswordModal() {
+            document.getElementById('forgotPasswordModal').classList.add('hidden');
+        }
+
+        function fetchSecurityQuestion() {
+            const username = document.getElementById('forgotUsername').value.trim();
+            const errDiv = document.getElementById('forgotPasswordError');
+            
+            errDiv.classList.add('hidden');
+            
+            if (!username) {
+                errDiv.textContent = 'Please enter your username';
+                errDiv.classList.remove('hidden');
+                return;
+            }
+            
+            fetch('/forgot-password', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ username: username })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('securityQuestionDisplay').textContent = '❓ ' + data.security_question;
+                    document.getElementById('forgotPasswordStep1').classList.add('hidden');
+                    document.getElementById('forgotPasswordStep2').classList.remove('hidden');
+                } else {
+                    errDiv.textContent = data.message || 'User not found';
+                    errDiv.classList.remove('hidden');
+                }
+            })
+            .catch(error => {
+                errDiv.textContent = 'Error: Unable to fetch security question';
+                errDiv.classList.remove('hidden');
+                console.error('Error:', error);
+            });
+        }
+
+        function resetPassword() {
+            const username = document.getElementById('forgotUsername').value.trim();
+            const securityAnswer = document.getElementById('securityAnswerInput').value.trim();
+            const newPassword = document.getElementById('newPasswordInput').value;
+            const errDiv = document.getElementById('forgotPasswordError2');
+            
+            errDiv.classList.add('hidden');
+            
+            if (!securityAnswer) {
+                errDiv.textContent = 'Please answer the security question';
+                errDiv.classList.remove('hidden');
+                return;
+            }
+            
+            if (!newPassword) {
+                errDiv.textContent = 'Please enter a new password';
+                errDiv.classList.remove('hidden');
+                return;
+            }
+            
+            if (newPassword.length < 4) {
+                errDiv.textContent = 'Password must be at least 4 characters';
+                errDiv.classList.remove('hidden');
+                return;
+            }
+            
+            fetch('/verify-security-answer', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    username: username,
+                    security_answer: securityAnswer,
+                    new_password: newPassword
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Show success message
+                    errDiv.textContent = '✓ ' + data.message;
+                    errDiv.style.color = '#10b981';
+                    errDiv.classList.remove('hidden');
+                    
+                    // Close modal after 2 seconds
+                    setTimeout(() => {
+                        closeForgotPasswordModal();
+                        errDiv.style.color = '#ef4444';
+                    }, 2000);
+                } else {
+                    errDiv.textContent = data.message || 'Password reset failed';
+                    errDiv.classList.remove('hidden');
+                }
+            })
+            .catch(error => {
+                errDiv.textContent = 'Error: Unable to reset password';
+                errDiv.classList.remove('hidden');
+                console.error('Error:', error);
+            });
+        }
+
+        function goBackForgotPassword() {
+            document.getElementById('forgotPasswordStep1').classList.remove('hidden');
+            document.getElementById('forgotPasswordStep2').classList.add('hidden');
+        }
+
         function resetButton() {
             const button = document.getElementById('startTest');
             button.disabled = false;
@@ -1272,6 +1421,8 @@
             document.getElementById('signupUsername').value = '';
             document.getElementById('signupDisplayName').value = '';
             document.getElementById('signupPassword').value = '';
+            document.getElementById('signupSecurityQuestion').value = '';
+            document.getElementById('signupSecurityAnswer').value = '';
             document.getElementById('signupError').classList.add('hidden');
         }
         
@@ -1283,6 +1434,8 @@
             const username = document.getElementById('signupUsername').value.trim();
             const displayName = document.getElementById('signupDisplayName').value.trim();
             const password = document.getElementById('signupPassword').value;
+            const securityQuestion = document.getElementById('signupSecurityQuestion').value.trim();
+            const securityAnswer = document.getElementById('signupSecurityAnswer').value.trim();
             const signupErr = document.getElementById('signupError');
             
             // Clear previous errors
@@ -1301,6 +1454,18 @@
                 return;
             }
             
+            if (!securityQuestion) {
+                signupErr.textContent = 'Security question is required for password recovery';
+                signupErr.classList.remove('hidden');
+                return;
+            }
+            
+            if (!securityAnswer) {
+                signupErr.textContent = 'Security answer is required';
+                signupErr.classList.remove('hidden');
+                return;
+            }
+            
             // Submit signup
             fetch('/signup', {
                 method: 'POST',
@@ -1308,7 +1473,9 @@
                 body: JSON.stringify({
                     username: username,
                     display_name: displayName || username,
-                    password: password
+                    password: password,
+                    security_question: securityQuestion,
+                    security_answer: securityAnswer
                 })
             })
             .then(r => r.json())
@@ -1405,6 +1572,11 @@
             // Sign up button behavior
             document.getElementById('signupBtn').addEventListener('click', function() {
                 openSignupModal();
+            });
+
+            // Forgot Password button behavior
+            document.getElementById('forgotPasswordBtn').addEventListener('click', function() {
+                openForgotPasswordModal();
             });
 
             // Login button behavior

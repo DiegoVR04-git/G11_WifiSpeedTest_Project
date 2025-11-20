@@ -7,6 +7,8 @@ import sqlite3
 from datetime import datetime, timedelta
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
+import socket
+import requests
 
 app = Flask(__name__)
 app.secret_key = 'wifi_speed_test_secret_key_2024'
@@ -779,8 +781,6 @@ def network_status():
 @app.route('/check-connection')
 def check_connection():
     """Check if device has internet connectivity (accessible to all roles)"""
-    import socket
-    import requests
     
     connectivity_status = {
         'connected': False,

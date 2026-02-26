@@ -1,6 +1,8 @@
 (function () {
   // Configuration
-  const WS_URL = `ws://${window.location.hostname}:${window.location.port || 3000}`;
+  const isSecure = window.location.protocol === 'https:';
+  const wsProtocol = isSecure ? 'wss:' : 'ws:';
+  const WS_URL = `${wsProtocol}//${window.location.host}`;
   const ADMIN_PASSWORD = 'admin123'; // Change this to your desired password
   const AUTH_KEY = 'adminAuth';
   const AUTH_EXPIRY_HOURS = 24;

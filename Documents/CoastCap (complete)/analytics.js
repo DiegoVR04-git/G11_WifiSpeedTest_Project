@@ -1,6 +1,6 @@
 (function () {
-  const TRACK_URL = window.__ADMIN_TRACK_URL || 'http://localhost:3000/track';
-  const USER_LEFT_URL = 'http://localhost:3000/user-left';
+  const TRACK_URL = window.__ADMIN_TRACK_URL || '/track';
+  const USER_LEFT_URL = '/user-left';
   const HEARTBEAT_MS = 10000;
   const CLIENT_ID_KEY = 'adminLiveClientId';
 

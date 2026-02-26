@@ -486,6 +486,11 @@ app.post('/user-left', (req, res) => {
 // Create WebSocket server
 const wss = new WebSocket.Server({ server });
 
+// Add error handler to WebSocket server
+wss.on('error', (error) => {
+  console.error('WebSocket Server Error:', error);
+});
+
 wss.on('connection', (ws) => {
   console.log('Admin client connected');
   wsClients.add(ws);
@@ -557,4 +562,17 @@ server.listen(PORT, () => {
   if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.TELEGRAM_CHAT_ID) {
     console.log('⚠️  Telegram notifications disabled. Add TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID to enable\n');
   }
+});
+
+// Error handlers to prevent crashes
+server.on('error', (error) => {
+  console.error('Server Error:', error);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });

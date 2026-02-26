@@ -13,6 +13,9 @@ const http = require('http');
 const WebSocket = require('ws');
 
 const PORT = process.env.PORT || 3000;
+console.log(`🔧 Starting server on PORT: ${PORT}`);
+console.log(`🔧 Environment check - TELEGRAM_BOT_TOKEN: ${process.env.TELEGRAM_BOT_TOKEN ? 'SET' : 'NOT SET'}`);
+console.log(`🔧 Environment check - TELEGRAM_CHAT_ID: ${process.env.TELEGRAM_CHAT_ID ? 'SET' : 'NOT SET'}`);
 
 // ===== SECURITY CONFIG =====
 const HCAPTCHA_SECRET = process.env.HCAPTCHA_SECRET || "ES_a41bef0abddb64394ae4a03c0ac6406db"; // hCaptcha secret key
@@ -581,6 +584,11 @@ server.listen(PORT, '0.0.0.0', () => {
     console.log('⚠️  Telegram notifications disabled. Add TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID to enable\n');
   }
   console.log('✅ Server is ready and listening on all interfaces\n');
+  
+  // Keep-alive heartbeat to prevent Railway from killing the container
+  setInterval(() => {
+    console.log('💓 Heartbeat - Server is alive');
+  }, 30000); // Every 30 seconds
 });
 
 // Error handlers to prevent crashes

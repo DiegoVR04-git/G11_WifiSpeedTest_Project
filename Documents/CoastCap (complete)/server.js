@@ -31,6 +31,9 @@ const blockedAgents = [
 const app = express();
 const server = http.createServer(app);
 
+// Trust Railway/Cloud proxy for rate limiting
+app.set('trust proxy', true);
+
 // ===== MIDDLEWARE =====
 // Security headers (modified for inline scripts)
 app.use(

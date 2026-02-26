@@ -541,7 +541,7 @@ setInterval(() => {
   });
 }, 60000);
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log('\n🔒 ================================');
   console.log('   SECURE SERVER STARTED');
   console.log('   ================================');
@@ -562,6 +562,7 @@ server.listen(PORT, () => {
   if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.TELEGRAM_CHAT_ID) {
     console.log('⚠️  Telegram notifications disabled. Add TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID to enable\n');
   }
+  console.log('✅ Server is ready and listening on all interfaces\n');
 });
 
 // Error handlers to prevent crashes

@@ -31,8 +31,8 @@ const blockedAgents = [
 const app = express();
 const server = http.createServer(app);
 
-// Trust Railway/Cloud proxy for rate limiting
-app.set('trust proxy', true);
+// Trust Railway/Cloud proxy - set to number of proxies
+app.set('trust proxy', 1);
 
 // ===== MIDDLEWARE =====
 // Security headers (modified for inline scripts)
@@ -59,12 +59,14 @@ const strictLimiter = rateLimit({
   message: "Too many attempts, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { trustProxy: false }, // Disable strict proxy validation for Railway
 });
 
 const generalLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 100, // Max 100 requests per minute
   message: "Too many requests, slow down.",
+  validate: { trustProxy: false }, // Disable strict proxy validation for Railway
 });
 
 app.use(generalLimiter);

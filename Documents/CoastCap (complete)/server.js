@@ -80,6 +80,12 @@ const generalLimiter = rateLimit({
 // Temporarily disable general rate limiter for Railway debugging
 // app.use(generalLimiter);
 
+// Request logging middleware for debugging
+app.use((req, res, next) => {
+  console.log(`📥 ${req.method} ${req.path} from ${req.ip}`);
+  next();
+});
+
 // IP blocklist
 app.use((req, res, next) => {
   const ip = req.ip || req.connection.remoteAddress;
@@ -230,7 +236,13 @@ app.get('/admin.html', (req, res) => {
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'OK', captcha: HCAPTCHA_ENABLED });
+  try {
+    console.log('✅ Health check requested');
+    res.json({ status: 'OK', captcha: HCAPTCHA_ENABLED });
+  } catch (error) {
+    console.error('❌ Health check error:', error);
+    res.status(500).json({ status: 'ERROR', error: error.message });
+  }
 });
 
 // Track user activity
@@ -481,6 +493,12 @@ app.post('/user-left', (req, res) => {
   } catch (err) {
     res.status(400).json({ ok: false, error: err.message });
   }
+});
+
+// Catch-all error handler for routes
+app.use((err, req, res, next) => {
+  console.error('❌ Route error:', err);
+  res.status(500).json({ error: 'Internal server error' });
 });
 
 // Create WebSocket server

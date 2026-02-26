@@ -611,12 +611,13 @@ server.listen(PORT, '0.0.0.0', () => {
   // Self-ping to keep the service active (Railway health check)
   setInterval(async () => {
     try {
-      const response = await fetch(`http://localhost:${PORT}/health`);
+      const response = await fetch(`http://127.0.0.1:${PORT}/health`);
       if (response.ok) {
         console.log('🔄 Self-ping successful');
       }
     } catch (error) {
-      console.error('🔄 Self-ping failed:', error.message);
+      // Self-ping failure is not critical, just skip logging
+      // The heartbeat is enough to show the server is alive
     }
   }, 60000); // Every 60 seconds
 });

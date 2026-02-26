@@ -77,7 +77,8 @@ const generalLimiter = rateLimit({
   skip: (req) => req.path === '/health' // Skip rate limit for health checks
 });
 
-app.use(generalLimiter);
+// Temporarily disable general rate limiter for Railway debugging
+// app.use(generalLimiter);
 
 // IP blocklist
 app.use((req, res, next) => {

@@ -1,6 +1,8 @@
 // ===== SECURE SERVER SETUP =====
 // Install: npm install express express-rate-limit helmet cors body-parser node-fetch@2 ws dotenv
+console.log('🚀 Application starting...');
 require('dotenv').config(); // Load environment variables from .env file
+console.log('✅ dotenv loaded');
 
 const express = require("express");
 const rateLimit = require("express-rate-limit");
@@ -11,6 +13,7 @@ const fetch = require("node-fetch");
 const path = require("path");
 const http = require('http');
 const WebSocket = require('ws');
+console.log('✅ All modules loaded');
 
 const PORT = process.env.PORT || 3000;
 console.log(`🔧 Starting server on PORT: ${PORT}`);
@@ -237,11 +240,18 @@ app.get('/admin.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
+// Root route
+app.get('/', (req, res) => {
+  console.log('📥 Root route accessed');
+  res.sendFile(path.join(__dirname, 'login.html'));
+});
+
 // Health check
 app.get('/health', (req, res) => {
   try {
     console.log('✅ Health check requested');
-    res.json({ status: 'OK', captcha: HCAPTCHA_ENABLED });
+    res.status(200).json({ status: 'OK', captcha: HCAPTCHA_ENABLED, timestamp: Date.now() });
+    console.log('✅ Health check response sent');
   } catch (error) {
     console.error('❌ Health check error:', error);
     res.status(500).json({ status: 'ERROR', error: error.message });

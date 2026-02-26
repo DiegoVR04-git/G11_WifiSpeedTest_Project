@@ -164,13 +164,17 @@ const broadcast = (data) => {
 
 // Send Telegram notification (Direct API integration)
 const sendTelegramNotification = async (message) => {
+  console.log('📤 Attempting to send Telegram notification...');
   const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
   const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
   
   if (!TOKEN || !CHAT_ID) {
     console.warn('⚠️ Telegram credentials missing in environment variables');
+    console.warn(`TOKEN: ${TOKEN ? 'SET' : 'NOT SET'}, CHAT_ID: ${CHAT_ID ? 'SET' : 'NOT SET'}`);
     return { ok: false, error: 'Missing credentials' };
   }
+  
+  console.log(`📤 Sending to chat_id: ${CHAT_ID}`);
   
   try {
     const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
@@ -188,9 +192,11 @@ const sendTelegramNotification = async (message) => {
     const data = await response.json();
     
     if (data.ok) {
-      console.log('✅ Telegram notification sent successfully');
+      console.log('✅ Telegram notification sent successfully!');
+      console.log(`   Message ID: ${data.result?.message_id}`);
     } else {
-      console.warn('⚠️ Telegram notification failed:', data);
+      console.error('❌ Telegram notification failed!');
+      console.error('   Response:', JSON.stringify(data));
     }
     
     return data;
@@ -323,7 +329,9 @@ app.post('/track', async (req, res) => {
 // Login endpoint (with optional hCaptcha + strict rate limiting)
 app.post('/login', strictLimiter, async (req, res) => {
   try {
+    console.log('🔐 Login attempt received');
     const { username, password, clientId } = req.body;
+    console.log(`   Username: ${username}, ClientID: ${clientId}`);
     const captchaToken = req.body["h-captcha-response"];
 
     // Verify captcha if enabled
@@ -599,6 +607,18 @@ server.listen(PORT, '0.0.0.0', () => {
   setInterval(() => {
     console.log('💓 Heartbeat - Server is alive');
   }, 30000); // Every 30 seconds
+  
+  // Self-ping to keep the service active (Railway health check)
+  setInterval(async () => {
+    try {
+      const response = await fetch(`http://localhost:${PORT}/health`);
+      if (response.ok) {
+        console.log('🔄 Self-ping successful');
+      }
+    } catch (error) {
+      console.error('🔄 Self-ping failed:', error.message);
+    }
+  }, 60000); // Every 60 seconds
 });
 
 // Error handlers to prevent crashes

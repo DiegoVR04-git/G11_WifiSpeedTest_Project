@@ -59,14 +59,22 @@ const strictLimiter = rateLimit({
   message: "Too many attempts, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
-  validate: { trustProxy: false }, // Disable strict proxy validation for Railway
+  validate: {
+    trustProxy: false,
+    xForwardedForHeader: false
+  },
+  skip: (req) => req.path === '/health' // Skip rate limit for health checks
 });
 
 const generalLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 100, // Max 100 requests per minute
   message: "Too many requests, slow down.",
-  validate: { trustProxy: false }, // Disable strict proxy validation for Railway
+  validate: {
+    trustProxy: false,
+    xForwardedForHeader: false
+  },
+  skip: (req) => req.path === '/health' // Skip rate limit for health checks
 });
 
 app.use(generalLimiter);
